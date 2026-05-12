@@ -8,6 +8,9 @@ import { HttpService } from '@nestjs/axios';
 import z from 'zod';
 import { firstValueFrom } from 'rxjs';
 import { randomUUID } from 'crypto';
+import { Repository } from 'typeorm';
+import { SearchHistory } from './entities/searchHistory.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 const duckDuckGoTopicSchema = z.object({
   Text: z.string().optional(),
@@ -49,7 +52,11 @@ export class SearchService {
   private readonly logger = new Logger(SearchService.name);
   private readonly DUCK_DUCK_GO_API_URL = 'https://api.duckduckgo.com/';
 
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    @InjectRepository(SearchHistory)
+    private readonly searchHistoryRepository: Repository<SearchHistory>,
+    private readonly httpService: HttpService,
+  ) {}
 
   async searchDuckDuckGo(query: string, page: number = 1, limit: number = 10) {
     let topics: DuckDuckGoResponse['RelatedTopics'] = [];
@@ -101,6 +108,27 @@ export class SearchService {
       page,
       limit,
     };
+  }
+
+  async saveQuery(query: string): Promise<void> {
+    try {
+      const history = this.searchHistoryRepository.create({ query });
+      await this.searchHistoryRepository.save(history);
+    } catch (error) {
+      this.logger.error(
+        `Could not save search history: ${query}`,
+        error instanceof Error ? error.stack : error,
+      );
+    }
+  }
+
+  async getHistory() {
+    const history = await this.searchHistoryRepository.find({
+      order: { createdAt: 'DESC' },
+      take: 10,
+    });
+
+    return { history };
   }
 
   private formatSearchResult(title: string, url: string): SearchResponse {

@@ -6,3 +6,9 @@ export class GetSearchDto extends PaginationDto {
   @IsNotEmpty()
   query: string;
 }
+
+export class PostSearchDto extends PaginationDto {
+  @IsString()
+  @IsNotEmpty()
+  query: string;
+}

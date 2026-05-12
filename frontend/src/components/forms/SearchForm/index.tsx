@@ -33,7 +33,13 @@ const SearchForm: FC = () => {
   const handleSubmit = async (formValues: z.infer<typeof formSchema>) => {
     const { query } = formValues;
 
-    const response = await fetch("http://localhost:3000/search?query=" + query);
+    const response = await fetch("http://localhost:3000/search", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query,
+      }),
+    });
     const data = await response.json();
 
     const { results, ...pagination } = data;
