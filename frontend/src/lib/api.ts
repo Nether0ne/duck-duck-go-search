@@ -37,7 +37,6 @@ export const duckDuckGoSearch = async ({
   save = false,
 }: DuckDuckGoSearchParameters) => {
   const endpoint = `${API_URL}/search${!save ? `?q=${encodeURIComponent(`${query}`)}&page=${page}&limit=${limit}` : ""}`;
-
   const response = await fetch(endpoint, {
     method: !save ? "GET" : "POST",
     headers: { "Content-Type": "application/json" },
@@ -47,7 +46,6 @@ export const duckDuckGoSearch = async ({
   if (!response.ok) throw new Error("Could not reach API");
 
   const jsonData = await response.json();
-  console.log(jsonData);
   const parsedResponse = duckDuckGoSearchResponseSchema.parse(jsonData);
 
   return parsedResponse;

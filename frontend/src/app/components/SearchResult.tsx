@@ -1,4 +1,4 @@
-import { FC, memo } from "react";
+import { FC } from "react";
 import { Button } from "../../components/ui/button";
 
 type SearchResultProps = {
@@ -6,7 +6,7 @@ type SearchResultProps = {
   url: string;
 };
 
-const SearchResult: FC<SearchResultProps> = memo(({ title, url }) => (
+const SearchResult: FC<SearchResultProps> = ({ title, url }) => (
   <a href={url} target="_blank" rel="noopener noreferrer">
     <Button
       variant="secondary"
@@ -18,7 +18,7 @@ const SearchResult: FC<SearchResultProps> = memo(({ title, url }) => (
       </p>
     </Button>
   </a>
-));
+);
 SearchResult.displayName = "SearchResult";
 
 export default SearchResult;

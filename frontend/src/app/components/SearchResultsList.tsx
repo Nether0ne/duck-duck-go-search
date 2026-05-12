@@ -1,10 +1,10 @@
 "use client";
 
-import { FC, memo } from "react";
+import { FC } from "react";
 import { useSearchResultsStore } from "../../store/searchResults";
 import SearchResult from "@/app/components/SearchResult";
 
-const SearchResultsList: FC = memo(() => {
+const SearchResultsList: FC = () => {
   const results = useSearchResultsStore((state) => state.results);
   const total = useSearchResultsStore((state) => state.pagination.total);
 
@@ -25,7 +25,7 @@ const SearchResultsList: FC = memo(() => {
       </ul>
     </div>
   );
-});
+};
 SearchResultsList.displayName = "SearchResultsList";
 
 export default SearchResultsList;

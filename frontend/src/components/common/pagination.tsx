@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, memo, useState } from "react";
+import { FC, useState } from "react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { cn } from "@/lib/utils";

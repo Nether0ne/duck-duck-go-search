@@ -5,27 +5,33 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC, useCallback, useEffect } from "react";
+import { FC, useCallback, useEffect, useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 import { duckDuckGoSearch } from "@/lib/api";
 import { toast } from "sonner";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const formSchema = z.object({
   query: z.string().min(1, "Search query must be at least 1 character long."),
 });
 
-type SearchFormProps = {
-  query?: string;
-};
+const SearchForm: FC = () => {
+  const { replace } = useRouter();
+  const searchParams = useSearchParams();
 
-const SearchForm: FC<SearchFormProps> = ({ query }) => {
+  const urlQuery = useMemo(
+    () => searchParams.get("query") ?? "",
+    [searchParams],
+  );
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      query,
+      query: urlQuery,
     },
   });
+  const query = useSearchResultsStore((state) => state.query);
   const setQuery = useSearchResultsStore((state) => state.setQuery);
   const setResults = useSearchResultsStore((state) => state.setResults);
   const setPagination = useSearchResultsStore((state) => state.setPagination);
@@ -42,6 +48,7 @@ const SearchForm: FC<SearchFormProps> = ({ query }) => {
         setQuery(query);
         setResults(results);
         setPagination(pagination);
+        replace(`/?query=${encodeURIComponent(query)}`);
       } catch (error) {
         toast.error("Could not look up search query: " + query, {
           description: error instanceof Error ? error?.message : undefined,
@@ -52,12 +59,12 @@ const SearchForm: FC<SearchFormProps> = ({ query }) => {
   );
 
   useEffect(() => {
-    if (!query) return;
+    if (!urlQuery) return;
 
-    setQuery(query);
-    form.setValue("query", query);
+    form.setValue("query", urlQuery);
+    setQuery(urlQuery);
     form.handleSubmit(handleSubmit)();
-  }, [query, setQuery, form, handleSubmit]);
+  }, [urlQuery, form, handleSubmit, setQuery]);
 
   useEffect(() => {
     const formAbortController = new AbortController();
