@@ -9,7 +9,7 @@ export class SearchController {
   @Get()
   async searchGet(@Query() queryParameters: GetSearchDto) {
     const { query, page, limit } = queryParameters || {};
-
+    console.log(queryParameters);
     return this.searchService.searchDuckDuckGo(query, page, limit);
   }
 }
