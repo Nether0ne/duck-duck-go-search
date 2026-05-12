@@ -4,11 +4,11 @@ import { PaginationDto } from 'src/common/dto/pagination.dto';
 export class GetSearchDto extends PaginationDto {
   @IsString()
   @IsNotEmpty()
-  query: string;
+  q: string;
 }
 
 export class PostSearchDto extends PaginationDto {
   @IsString()
   @IsNotEmpty()
-  query: string;
+  q: string;
 }

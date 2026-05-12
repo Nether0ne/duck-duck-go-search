@@ -10,19 +10,19 @@ export class SearchController {
 
   @Get()
   async searchGet(@Query() queryParameters: GetSearchDto) {
-    const { query, page, limit } = queryParameters || {};
+    const { q, page, limit } = queryParameters || {};
 
-    return this.searchService.searchDuckDuckGo(query, page, limit);
+    return this.searchService.searchDuckDuckGo(q, page, limit);
   }
 
   @Post()
   async searchPost(@Body() body: PostSearchDto) {
-    const { query, page, limit } = body || {};
-    this.searchService.saveQuery(query).catch((error) => {
+    const { q, page, limit } = body || {};
+    this.searchService.saveQuery(q).catch((error) => {
       this.logger.error('Background history save failed', error);
     });
 
-    return this.searchService.searchDuckDuckGo(query, page, limit);
+    return this.searchService.searchDuckDuckGo(q, page, limit);
   }
 
   @Get('history')
