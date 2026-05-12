@@ -1,7 +1,7 @@
 "use client";
 
 import { FC } from "react";
-import { useSearchResultsStore } from "../store/searchResults";
+import { useSearchResultsStore } from "../../store/searchResults";
 import SearchResult from "@/components/cards/SearchResult";
 
 const SearchResultsList: FC = () => {
