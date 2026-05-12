@@ -1,16 +1,25 @@
-import SearchForm from "@/components/forms/SearchForm";
 import { FC } from "react";
-import { Toaster } from "sonner";
 import SearchResultsList from "./components/SearchResultsList";
+import SearchResultsPagination from "./components/SearchResultsPagination";
+import SearchForm from "./components/SearchForm";
 
-const HomePage: FC = () => {
+type HomePageProps = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+const parseSearchValue = (value: string | string[] | undefined) =>
+  Array.isArray(value) ? (value.at(0) ?? "") : "";
+
+const HomePage: FC<HomePageProps> = async ({ searchParams }) => {
+  const { query, page } = await searchParams;
+  const parsedQuery = parseSearchValue(query);
+  const parsedPage = page ? parseInt(parseSearchValue(page)) : 1;
+
   return (
-    <div className="flex flex-1 flex-col w-full overflow-y-auto rounded-none">
-      <div className="max-w-[800px] w-full mx-auto mt-4">
-        <SearchForm />
-        <SearchResultsList />
-        <Toaster />
-      </div>
+    <div className="flex flex-col flex-1">
+      <SearchForm query={parsedQuery} />
+      <SearchResultsList />
+      <SearchResultsPagination page={parsedPage} />
     </div>
   );
 };

@@ -1,15 +1,14 @@
 "use client";
 
-import { FC } from "react";
+import { FC, memo } from "react";
 import { useSearchResultsStore } from "../../store/searchResults";
-import SearchResult from "@/components/cards/SearchResult";
+import SearchResult from "@/app/components/SearchResult";
 
-const SearchResultsList: FC = () => {
+const SearchResultsList: FC = memo(() => {
   const results = useSearchResultsStore((state) => state.results);
   const total = useSearchResultsStore((state) => state.pagination.total);
 
-  console.log(results);
-  if (total === 0) return null;
+  if (total === 0) return <p className="mt-4">Nothing was found</p>;
 
   return (
     <div className="space-y-4 mt-4">
@@ -26,7 +25,7 @@ const SearchResultsList: FC = () => {
       </ul>
     </div>
   );
-};
+});
 SearchResultsList.displayName = "SearchResultsList";
 
 export default SearchResultsList;
