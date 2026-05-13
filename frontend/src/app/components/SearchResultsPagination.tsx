@@ -4,6 +4,7 @@ import Pagination from "@/components/common/pagination";
 import { duckDuckGoSearch } from "@/lib/api";
 import { useSearchResultsStore } from "@/store/searchResults";
 import { FC, useEffect } from "react";
+import { toast } from "sonner";
 
 const SearchResultsPagination: FC = () => {
   const query = useSearchResultsStore((state) => state.query);
@@ -17,14 +18,20 @@ const SearchResultsPagination: FC = () => {
 
   useEffect(() => {
     const fetchPage = async () => {
-      if (!query) return;
-      const { results, ...paginationData } = await duckDuckGoSearch({
-        query,
-        page: pagination.page,
-      });
+      try {
+        if (!query) return;
+        const { results, ...paginationData } = await duckDuckGoSearch({
+          query,
+          page: pagination.page,
+        });
 
-      setResults(results);
-      setPagination(paginationData);
+        setResults(results);
+        setPagination(paginationData);
+      } catch (error) {
+        toast.error("Error fetching another page for query: " + query, {
+          description: error instanceof Error ? error?.message : undefined,
+        });
+      }
     };
     fetchPage();
   }, [pagination.page]);
