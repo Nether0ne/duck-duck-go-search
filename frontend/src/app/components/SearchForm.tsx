@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC, useCallback, useEffect, useMemo } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import z from "zod";
 import { duckDuckGoSearch } from "@/lib/api";
@@ -17,6 +17,7 @@ const formSchema = z.object({
 });
 
 const SearchForm: FC = () => {
+  const isInitialMount = useRef(true);
   const { replace } = useRouter();
   const searchParams = useSearchParams();
 
@@ -31,7 +32,6 @@ const SearchForm: FC = () => {
       query: urlQuery,
     },
   });
-  const query = useSearchResultsStore((state) => state.query);
   const setQuery = useSearchResultsStore((state) => state.setQuery);
   const setResults = useSearchResultsStore((state) => state.setResults);
   const setPagination = useSearchResultsStore((state) => state.setPagination);
@@ -55,16 +55,17 @@ const SearchForm: FC = () => {
         });
       }
     },
-    [setQuery, setPagination, setResults],
+    [replace, setQuery, setPagination, setResults],
   );
 
   useEffect(() => {
-    if (!urlQuery) return;
-
-    form.setValue("query", urlQuery);
-    setQuery(urlQuery);
-    form.handleSubmit(handleSubmit)();
-  }, [urlQuery, form, handleSubmit, setQuery]);
+    if (isInitialMount.current && urlQuery) {
+      isInitialMount.current = false;
+      form.setValue("query", urlQuery);
+      setQuery(urlQuery);
+      form.handleSubmit(handleSubmit)();
+    }
+  }, [form, urlQuery, handleSubmit, setQuery]);
 
   useEffect(() => {
     const formAbortController = new AbortController();
