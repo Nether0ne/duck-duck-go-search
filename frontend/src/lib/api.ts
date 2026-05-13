@@ -50,7 +50,7 @@ export const duckDuckGoSearch = async ({
 };
 
 const searchHistoryEntry = z.object({
-  id: z.uuid(),
+  id: z.number(),
   query: z.string(),
   createdAt: z.string(),
 });
