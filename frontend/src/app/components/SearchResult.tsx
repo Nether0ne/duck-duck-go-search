@@ -51,7 +51,7 @@ const SearchResult: FC<SearchResultProps> = ({
             query={findQuery}
             matchStart={matchIndexStart}
             currentMatchIndex={currentMatchIndex}
-          />
+          />{" "}
           <i className="text-blue-500 underline break-all">
             <HighlightText
               text={url}
