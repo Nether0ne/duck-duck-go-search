@@ -17,6 +17,7 @@ const SearchResultsPagination: FC = () => {
 
   useEffect(() => {
     const fetchPage = async () => {
+      if (!query) return;
       const { results, ...paginationData } = await duckDuckGoSearch({
         query,
         page: pagination.page,
