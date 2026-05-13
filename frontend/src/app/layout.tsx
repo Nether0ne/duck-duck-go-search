@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  Sidebar,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import { Toaster } from "sonner";
-import AppSidebar from "./components/AppSidebar";
 import { Card } from "@/components/ui/card";
-import { FC, PropsWithChildren } from "react";
+import { FC, PropsWithChildren, ReactNode } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,15 +25,18 @@ export const metadata: Metadata = {
   description: "A test application to use Duck Duck Go proxy search",
 };
 
-const RootLayout: FC<PropsWithChildren> = ({ children }) => (
+const RootLayout: FC<PropsWithChildren & { sidebar: ReactNode }> = ({
+  sidebar,
+  children,
+}) => (
   <html
     lang="en"
     className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
   >
-    <body className="min-h-full flex flex-col w-full">
+    <body className="min-h-full flex w-full">
       <SidebarProvider>
-        <AppSidebar />
-        <SidebarTrigger className="" />
+        <Sidebar>{sidebar}</Sidebar>
+        <SidebarTrigger />
         <main className="grid w-full overflow-hidden p-1">
           <Card className="p-4 sm:p-4 flex flex-1">
             <Toaster />

@@ -56,7 +56,7 @@ const FindInResults: FC = () => {
         variant="outline"
         size="icon"
         aria-label="Previous match"
-        disabled={!hasMatches}
+        disabled={!hasMatches || currentMatchIndex <= 0}
         onClick={prevMatch}
       >
         <ChevronUp className="size-4" />
@@ -65,7 +65,7 @@ const FindInResults: FC = () => {
         variant="outline"
         size="icon"
         aria-label="Next match"
-        disabled={!hasMatches}
+        disabled={!hasMatches || currentMatchIndex >= matchCount - 1}
         onClick={nextMatch}
       >
         <ChevronDown className="size-4" />
