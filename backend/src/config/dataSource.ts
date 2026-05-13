@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { SearchHistory } from 'src/search/entities/searchHistory.entity';
+import { SearchHistory } from '../search/entities/searchHistory.entity';
 import { DataSource } from 'typeorm';
 import { DataSourceOptions } from 'typeorm/browser';
 
@@ -14,7 +14,7 @@ export const appDataSourceConfig = {
   migrations: [__dirname + '/../migrations/*{.ts,.js}'],
   migrationsTableName: 'migrations',
   migrationsRun: false,
-  synchronize: true,
+  synchronize: false,
 } satisfies DataSourceOptions;
 
 const appDataSource = new DataSource(appDataSourceConfig);
