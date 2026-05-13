@@ -42,7 +42,7 @@ const SearchResultsList: FC = () => {
     setMatchCount(totalMatches);
     setCurrentMatchIndex(0);
   }, [totalMatches, setMatchCount, setCurrentMatchIndex]);
-  console.log(matchesPerResult, matchOffsets);
+
   if (total === 0) return <p className="mt-4">Nothing was found</p>;
 
   return (
