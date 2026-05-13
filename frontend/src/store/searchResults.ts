@@ -20,6 +20,14 @@ export const useSearchResultsStore = create<{
   setQuery: (query: string) => void;
   results: SearchResult[];
   setResults: (searchResults: SearchResult[]) => void;
+  findQuery: string;
+  setFindQuery: (query: string) => void;
+  matchCount: number;
+  setMatchCount: (count: number) => void;
+  currentMatchIndex: number;
+  setCurrentMatchIndex: (index: number) => void;
+  prevMatch: () => void;
+  nextMatch: () => void;
   pagination: Pagination;
   setPagination: (pagination: Pagination) => void;
 }>((set) => ({
@@ -28,6 +36,17 @@ export const useSearchResultsStore = create<{
   results: [],
   setResults: (searchResults: SearchResult[]) =>
     set(() => ({ results: searchResults })),
+  findQuery: "",
+  setFindQuery: (findQuery: string) => set(() => ({ findQuery })),
+  matchCount: 0,
+  setMatchCount: (matchCount: number) => set(() => ({ matchCount })),
+  currentMatchIndex: 0,
+  setCurrentMatchIndex: (currentMatchIndex: number) =>
+    set(() => ({ currentMatchIndex })),
+  prevMatch: () =>
+    set((state) => ({ currentMatchIndex: state.currentMatchIndex - 1 })),
+  nextMatch: () =>
+    set((state) => ({ currentMatchIndex: state.currentMatchIndex + 1 })),
   pagination: {
     total: 0,
     page: 1,
