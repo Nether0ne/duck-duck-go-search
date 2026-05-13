@@ -1,17 +1,12 @@
 "use client";
 
-import React, { PropsWithChildren, ReactNode } from "react";
-
-type ErrorBoundaryProps = PropsWithChildren & {
-  fallback?: ReactNode;
-};
+import React from "react";
 
 class ErrorBoundary extends React.Component {
-  props: ErrorBoundaryProps = {};
   state = {
     hasError: false,
   };
-  constructor(props: { hasError: boolean; fallback?: ReactNode }) {
+  constructor(props: { hasError: boolean }) {
     super(props);
     this.state = { hasError: false };
   }
@@ -29,10 +24,6 @@ class ErrorBoundary extends React.Component {
   };
 
   render() {
-    if (this.state.hasError && this.props.fallback) {
-      return this.props.fallback;
-    }
-
     return this.props.children;
   }
 }

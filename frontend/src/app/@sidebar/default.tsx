@@ -9,7 +9,7 @@ const AppSidebar: FC = async () => {
 
   return (
     <SidebarGroup>
-      <ErrorBoundary fallback={<></>}>
+      <ErrorBoundary>
         {recentSearches.history.map(({ id, ...props }) => (
           <RecentSearchItem key={id} {...props} />
         ))}
