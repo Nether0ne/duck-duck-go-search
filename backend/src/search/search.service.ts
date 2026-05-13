@@ -1,4 +1,5 @@
 import {
+  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -11,6 +12,9 @@ import { randomUUID } from 'crypto';
 import { Repository } from 'typeorm';
 import { SearchHistory } from './entities/searchHistory.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { CACHE_TTL_MS } from 'src/common/constants/cache';
+import type { Cache } from 'cache-manager';
 
 const duckDuckGoTopicSchema = z.object({
   Text: z.string().optional(),
@@ -56,17 +60,48 @@ export class SearchService {
     @InjectRepository(SearchHistory)
     private readonly searchHistoryRepository: Repository<SearchHistory>,
     private readonly httpService: HttpService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   async searchDuckDuckGo(query: string, page: number = 1, limit: number = 10) {
     let topics: DuckDuckGoResponse['RelatedTopics'] = [];
+    const searchResults: SearchResponse[] = [];
     try {
-      const url = `${this.DUCK_DUCK_GO_API_URL}?q=${encodeURIComponent(query)}&format=json`;
-      const response = await firstValueFrom(
-        this.httpService.get<DuckDuckGoResponse>(url),
-      );
-      const data = duckDuckGoResponseSchema.parse(response.data);
-      topics = data.RelatedTopics;
+      const cacheKey = `search:${query}`;
+      const cachedSearchResults =
+        await this.cacheManager.get<SearchResponse[]>(cacheKey);
+
+      if (!cachedSearchResults) {
+        const url = `${this.DUCK_DUCK_GO_API_URL}?q=${encodeURIComponent(query)}&format=json`;
+        const response = await firstValueFrom(
+          this.httpService.get<DuckDuckGoResponse>(url),
+        );
+        const data = duckDuckGoResponseSchema.parse(response.data);
+        topics = data.RelatedTopics;
+
+        topics.forEach((topic) => {
+          const topics = topic.Topics;
+          const title = topic.Text;
+          const url = topic.FirstURL;
+
+          if (!topics && !title && !url) return;
+          if (title && url) {
+            searchResults.push(this.formatSearchResult(title, url));
+          }
+
+          topics?.map((topic) => {
+            const title = topic.Text;
+            const url = topic.FirstURL;
+            if (!title || !url) return null;
+            searchResults.push(this.formatSearchResult(title, url));
+          });
+        });
+        await this.cacheManager.set(cacheKey, searchResults, CACHE_TTL_MS);
+      } else {
+        for (const cachedSearchResult of cachedSearchResults) {
+          searchResults.push(cachedSearchResult);
+        }
+      }
     } catch (error) {
       this.logger.error(
         `Could not fetch DuckDuckGo with the following query: ${query}`,
@@ -76,25 +111,6 @@ export class SearchService {
         'Failed to fetch data from DuckDuckGo',
       );
     }
-
-    const searchResults: SearchResponse[] = [];
-    topics.forEach((topic) => {
-      const topics = topic.Topics;
-      const title = topic.Text;
-      const url = topic.FirstURL;
-
-      if (!topics && !title && !url) return;
-      if (title && url) {
-        searchResults.push(this.formatSearchResult(title, url));
-      }
-
-      topics?.map((topic) => {
-        const title = topic.Text;
-        const url = topic.FirstURL;
-        if (!title || !url) return null;
-        searchResults.push(this.formatSearchResult(title, url));
-      });
-    });
 
     const startIndex = (page - 1) * limit;
     const paginatedResults = searchResults.slice(
