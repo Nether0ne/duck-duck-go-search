@@ -8,7 +8,7 @@ import {
 
 @Entity('search_history')
 export class SearchHistory {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ type: 'varchar', length: 255 })

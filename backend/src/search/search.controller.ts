@@ -17,12 +17,12 @@ export class SearchController {
 
   @Post()
   async searchPost(@Body() body: PostSearchDto) {
-    const { q, page, limit } = body || {};
-    this.searchService.saveQuery(q).catch((error) => {
+    const { query, page, limit } = body || {};
+    this.searchService.saveQuery(query).catch((error) => {
       this.logger.error('Background history save failed', error);
     });
 
-    return this.searchService.searchDuckDuckGo(q, page, limit);
+    return this.searchService.searchDuckDuckGo(query, page, limit);
   }
 
   @Get('history')

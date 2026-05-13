@@ -10,5 +10,5 @@ export class GetSearchDto extends PaginationDto {
 export class PostSearchDto extends PaginationDto {
   @IsString()
   @IsNotEmpty()
-  q: string;
+  query: string;
 }

@@ -1,5 +1,3 @@
-"use server";
-
 import z from "zod";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
@@ -40,7 +38,7 @@ export const duckDuckGoSearch = async ({
   const response = await fetch(endpoint, {
     method: !save ? "GET" : "POST",
     headers: { "Content-Type": "application/json" },
-    body: !save ? undefined : JSON.stringify({ q: query, page, limit }),
+    body: !save ? undefined : JSON.stringify({ query, page, limit }),
     signal,
   });
   if (!response.ok) throw new Error("Could not reach API");
